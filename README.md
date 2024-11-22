@@ -23,3 +23,15 @@
 
 - Add references (if needed);
 - Add acknowledgements (if need).
+
+
+# Tips:
+```shell
+cd ./experiments/house-diffusion/model/datasets
+gdown h10DLrJz4ubM0Ujs6ZQI1_AhOuPDUpbhSQ
+tar -xzvf modified_swiss_dwellings.tar.gz
+
+# Training
+cd experiments/house-diffusion/model/scripts
+python image_train.py --dataset modified_swiss_dwellings --batch_size 32 --set_name train --timeout 36:00:00 --save_interval 2000 --test_interval 1000 --use_wall_self_attention true
+```

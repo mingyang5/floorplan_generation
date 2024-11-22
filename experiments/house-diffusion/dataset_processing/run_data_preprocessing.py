@@ -36,7 +36,7 @@ class MyConfig:
         room_index_dim (int): Length of the one-hot encoding of room indices.
 """
 
-    datapath: str = "path/to/modified-swiss-dwellings-v2"
+    datapath: str = "/home/mingyang/workspace/layout/dataset/modified-swiss-dwellings-v2"
     is_train: bool = True
 
     use_topojson_processing: bool = True

@@ -36,7 +36,7 @@ classes = 11
 """
 
 # Specify the device to use
-device = "cuda:0"
+device = "cuda:1"
 
 def train_model(model, train_loader, optimizer, criterion, classes, epochs):
     model.train()

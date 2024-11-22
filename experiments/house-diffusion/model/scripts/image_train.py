@@ -153,6 +153,8 @@ def create_argparser():
         struct_in_channels=0,
         timeout = None,
         test_interval=2000,
+        
+        # python image_train.py --dataset modified_swiss_dwellings --batch_size 32 --set_name train --timeout 36:00:00 --save_interval 2000 --test_interval 1000 --use_wall_self_attention true
     )
     parser = argparse.ArgumentParser()
     defaults.update(model_and_diffusion_defaults())

@@ -215,7 +215,8 @@ class WandbOutputFormat(KVWriter, ImageFolderWriter, VideoFolderWriter, ConfigWr
 
     def __init__(self, wandb_dir, run_log_dir, log_suffix):
         import wandb
-
+        wandb.login(key='b9127249aafad681b749cf7e6264a2e549441e6d')
+        
         self.wandb = wandb
 
         os.makedirs(wandb_dir, exist_ok=True)

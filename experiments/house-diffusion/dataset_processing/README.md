@@ -14,11 +14,22 @@ The file you should run for preprocessing is: [`run_data_preprocessing.py`](run_
 
 Generate training samples with the Minimum Rotated Rectangle approximation (MRR):
 
-```python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-train' is_train=true use_topojson_processing=true name=house_dicts_mrr make_mrr=true```
+```
+python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-train' is_train=true use_topojson_processing=true name=house_dicts_mrr make_mrr=true
+
+python run_data_preprocessing.py datapath='/home/mingyang/workspace/layout/dataset/modified-swiss-dwellings-v2/train' is_train=true use_topojson_processing=true name=house_dicts_mrr make_mrr=true
+
+```
 
 Generate training samples without MRR approximation:
 
-```python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-train' is_train=true use_topojson_processing=true name=house_dicts_full make_mrr=false```
+```
+python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-train' is_train=true use_topojson_processing=true name=house_dicts_full make_mrr=false
+
+# Bug?
+python run_data_preprocessing.py datapath='/home/mingyang/workspace/layout/dataset/modified-swiss-dwellings-v2/train' is_train=true use_topojson_processing=true name=house_dicts_full make_mrr=false
+
+```
 
 ### Preprocess test samples
 
@@ -29,7 +40,12 @@ The room_type can be predicted using a graph neural network (GNN) that predicts 
 After using the notebook to create the `graph_pred` and/or `graph_pred_n_corners` folder, the test house_dicts can be generated:
 
 Generate test samples with the Minimum Rotated Rectangle approximation (MRR):
-```python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-test' is_train=false use_topojson_processing=true name=house_dicts_mrr_test make_mrr=true```
+```
+python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-test' is_train=false use_topojson_processing=true name=house_dicts_mrr_test make_mrr=true
+
+python run_data_preprocessing.py datapath='/home/mingyang/workspace/layout/dataset/modified-swiss-dwellings-v2/test' is_train=false use_topojson_processing=true name=house_dicts_mrr_test make_mrr=true
+
+```
 
 
 ### How to turn preprocessing output into expected dataset format

@@ -1,0 +1,26 @@
+### experiments for housediffusion
+experiments/house-diffusion/dataset_processing/__pycache__
+experiments/house-diffusion/dataset_processing/data_preprocessing/__pycache__
+experiments/house-diffusion/evaluation/__pycache__
+experiments/house-diffusion/evaluation/plotting/__pycache__
+experiments/house-diffusion/model/scripts/__pycache__
+experiments/house-diffusion/model/house_diffusion.egg-info
+
+experiments/house-diffusion/model/scripts/ckpts
+# data: modified_swiss_dwellings
+experiments/house-diffusion/model/datasets/modified_swiss_dwellings
+
+
+### experiments for unet
+experiments/unet/__pycache__
+experiments/unet/data/__pycache__
+experiments/unet/evaluation/__pycache__
+experiments/unet/model/__pycache__
+
+experiments/unet/data/sam_vit_h_4b8939.pth
+experiments/unet/processed_dataset
+
+
+### Else
+datasets
+experiments/unet/results
