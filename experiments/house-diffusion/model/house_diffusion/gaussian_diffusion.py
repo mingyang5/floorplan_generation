@@ -37,7 +37,7 @@ def get_named_beta_schedule(schedule_name, num_diffusion_timesteps):
             beta_start, beta_end, num_diffusion_timesteps, dtype=np.float64
         )
     elif schedule_name == "cosine":
-        print("COSINE")
+        print("schedule_name: COSINE")
         return betas_for_alpha_bar(
             num_diffusion_timesteps,
             # lambda t: math.cos((t + 0.008) / 1.008 * math.pi / 2) ** 2,
@@ -533,6 +533,7 @@ class GaussianDiffusion:
 
             final = sample
         
+        
         samples.append(final['sample'])
         timesteps.append(final["t"])
 
@@ -832,8 +833,8 @@ class GaussianDiffusion:
         if model_kwargs is None:
             model_kwargs = {}
         if noise is None:
-            noise = th.randn_like(x_start)
-        x_t = self.q_sample(x_start, t, noise=noise)
+            noise = th.randn_like(x_start)              # randomly generate the noise
+        x_t = self.q_sample(x_start, t, noise=noise)    # generate  torch.Size([48, 2, 289])
 
         terms = {}
         tmp_mask = (1 - model_kwargs['src_key_padding_mask'])

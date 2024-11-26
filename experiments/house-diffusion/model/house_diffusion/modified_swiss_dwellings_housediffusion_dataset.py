@@ -26,9 +26,7 @@ def get_dataloader_modified_swiss_dwellings(
     """
     For a dataset, create a generator over (shapes, kwargs) pairs.
     """
-    print(f"Loading modified swiss dwellings from ")
-
-    print(f"Using dataset path: {dataset_name}")
+    print(f"Loading modified swiss dwellings from Using dataset path: {dataset_name}")
     
     is_train_set = set_name=='train'
 
@@ -48,8 +46,12 @@ def get_dataloader_modified_swiss_dwellings(
                                                 ids_list=ids_list,
                                                 use_structural_feats=use_structural_feats)
     else:
-        dataset = ModifiedSwissDwellingsDataset(f"../datasets/{dataset_name}/house_dicts", 
-                                                f"../datasets/{dataset_name}/{set_name}_ids.csv", 
+        # dataset = ModifiedSwissDwellingsDataset(f"../datasets/{dataset_name}/house_dicts", 
+        #                                         f"../datasets/{dataset_name}/{set_name}_ids.csv", 
+        #                                         use_augmentation=use_augmentation,
+        #                                         use_structural_feats=use_structural_feats)
+        dataset = ModifiedSwissDwellingsDataset(f"model/datasets/{dataset_name}/house_dicts", 
+                                                f"model/datasets/{dataset_name}/{set_name}_ids.csv", 
                                                 use_augmentation=use_augmentation,
                                                 use_structural_feats=use_structural_feats)
 
@@ -100,9 +102,9 @@ class ModifiedSwissDwellingsDataset(Dataset):
 
         houses = [load_id(data_path, id) for id in self.ids]
 
-        self.houses = [HouseDiffusionSample(**house) for house in houses]
+        self.houses = [HouseDiffusionSample(**house) for house in houses]   
 
-        self.use_augmentation = use_augmentation
+        self.use_augmentation = use_augmentation                
 
         self.use_structural_feats = use_structural_feats
 

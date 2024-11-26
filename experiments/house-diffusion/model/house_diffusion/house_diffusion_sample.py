@@ -1,14 +1,11 @@
 import dataclasses
 import typing
-
 import numpy as np
-
 
 @dataclasses.dataclass
 class HouseDiffusionSample:
-
     corners: np.ndarray
-
+    
     door_mask: np.ndarray
     self_mask: np.ndarray
     gen_mask: np.ndarray

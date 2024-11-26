@@ -37,7 +37,7 @@ python image_train.py --dataset modified_swiss_dwellings --batch_size 32 --set_n
 ```
 
 
-```
+```shell
 gdown 1N-HfrwoiIPAvwd9duUaQSVTyIO2O817Z         # modified-swiss-dwellings-v2 (raw)
 cd datasets/modified-swiss-dwellings-v2/test
 gdown 1ePuu10ee7kl41o82FGoGdPPIkFpuJEho

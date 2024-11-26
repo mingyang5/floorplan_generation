@@ -1,5 +1,3 @@
-
-
 from dataclasses import dataclass
 import json
 import os
@@ -80,24 +78,20 @@ def process_sample(house_diffusion_sample_generator: HouseDiffusionSampleGenerat
     return house_dict
 
 
-
 if __name__ == "__main__":
     conf: MyConfig = OmegaConf.structured(MyConfig)
-
     conf.merge_with_cli()
-
     print(conf)
 
     name = conf.name
-
+    os.makedirs(name, exist_ok=True)
     # house_dicts = []
 
+    house_diffusion_sample_generator = HouseDiffusionSampleGenerator(room_type_dim=conf.room_type_dim, 
+                                                                     corner_index_dim=conf.corner_index_dim, 
+                                                                     room_index_dim=conf.room_index_dim)
+    
     failed_ids = {}
-
-    os.makedirs(name, exist_ok=True)
-
-    house_diffusion_sample_generator = HouseDiffusionSampleGenerator(room_type_dim=conf.room_type_dim, corner_index_dim=conf.corner_index_dim, room_index_dim=conf.room_index_dim)
-
     for id in tqdm(gather_ids(conf.datapath)):
         try:
             datasample = DataSample(conf.datapath, id, is_train=conf.is_train, use_MRR=conf.make_mrr)

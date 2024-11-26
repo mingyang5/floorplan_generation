@@ -3,6 +3,9 @@ Train a diffusion model on images.
 """
 
 import argparse
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from house_diffusion import dist_util, logger
 from house_diffusion.rplanhg_datasets import load_rplanhg_structural_data
@@ -13,10 +16,14 @@ from house_diffusion.script_util import (
     args_to_dict,
     add_dict_to_argparser,
     update_arg_parser,
+    create_model_and_diffusion_proposed_v1,
+    
 )
 from house_diffusion.train_util import TrainLoop
-
 from house_diffusion.modified_swiss_dwellings_housediffusion_dataset import load_modified_swiss_dwellings, get_dataloader_modified_swiss_dwellings
+
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 def main():
     args = create_argparser().parse_args()
@@ -28,15 +35,16 @@ def main():
 
     print("Finished running: dist_util.setup_dist()")
     
-    logger.configure()
+    logger.configure()                  # wandb
 
     logger.log_config(vars(args))
 
     logger.log("creating model and diffusion...")
-    model, diffusion = create_model_and_diffusion(
-        **args_to_dict(args, model_and_diffusion_defaults().keys())
-    )
+    # model, diffusion = create_model_and_diffusion(**args_to_dict(args, model_and_diffusion_defaults().keys()))      # present the model
+    
+    model, diffusion = create_model_and_diffusion_proposed_v1(**args_to_dict(args, model_and_diffusion_defaults().keys())) # proposed v1
     model.to(dist_util.dev())
+    
     schedule_sampler = create_named_schedule_sampler(args.schedule_sampler, diffusion)
 
     logger.log("creating data loader...")
@@ -68,7 +76,7 @@ def main():
     elif "modified_swiss_dwellings" in args.dataset:
     
         # Disable for modified_swiss_dwellings_without_structural
-        use_structural = "without_structural" not in args.dataset
+        use_structural = "without_structural" not in args.dataset       # True
 
         data = load_modified_swiss_dwellings(
             batch_size=args.batch_size,
@@ -131,7 +139,8 @@ def main():
         analog_bit=args.analog_bit,
         timeout=args.timeout,
         data_val=data_val,
-        test_interval=args.test_interval
+        test_interval=args.test_interval,
+        train_num_steps=args.train_num_steps
     ).run_loop()
 
 
@@ -142,19 +151,19 @@ def create_argparser():
         lr=1e-4,
         weight_decay=0.0,
         lr_anneal_steps=0,
-        batch_size=1,
+        batch_size=48,
+        # batch_size=256,
         microbatch=-1,  # -1 disables microbatches
         ema_rate="0.9999",  # comma-separated list of EMA values
         log_interval=100,
-        save_interval=1000,
+        save_interval=2000,
         resume_checkpoint="",
         use_fp16=False,
         fp16_scale_growth=1e-3,
         struct_in_channels=0,
-        timeout = None,
+        timeout = "36:00:00",
         test_interval=2000,
-        
-        # python image_train.py --dataset modified_swiss_dwellings --batch_size 32 --set_name train --timeout 36:00:00 --save_interval 2000 --test_interval 1000 --use_wall_self_attention true
+        train_num_steps=700000
     )
     parser = argparse.ArgumentParser()
     defaults.update(model_and_diffusion_defaults())

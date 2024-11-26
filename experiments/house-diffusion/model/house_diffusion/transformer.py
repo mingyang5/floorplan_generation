@@ -253,10 +253,10 @@ class TransformerModel(nn.Module):
             nn.Linear(self.model_channels, self.time_channels),
         )
         
-        self.input_emb = nn.Linear(self.in_channels, self.model_channels)
+        self.input_emb = nn.Linear(self.in_channels, self.model_channels)               # 18, 512
         self.condition_emb = nn.Linear(self.condition_channels, self.model_channels)
 
-        if self.use_structural_cross_attention:
+        if self.use_structural_cross_attention:                                         # True
             # This isn't used in the original EncoderLayer
             self.door_type_emb = nn.Linear(3, self.model_channels)
 
@@ -267,15 +267,18 @@ class TransformerModel(nn.Module):
         if self.use_structural_cross_attention:
             self.struct_in_channels: int = self.struct_in_channels # type: ignore
 
-            self.transformer_layers: typing.List[EncoderLayerWithStructuralCrossAttention] = nn.ModuleList([EncoderLayerWithStructuralCrossAttention(self.model_channels, 4, 0.1, self.activation) for x in range(self.num_transfomers_layers)]) # type: ignore
+            self.transformer_layers: typing.List[EncoderLayerWithStructuralCrossAttention] = nn.ModuleList([EncoderLayerWithStructuralCrossAttention(self.model_channels, 4, 0.1, self.activation) 
+                                                                                                            for x in range(self.num_transfomers_layers)]) # type: ignore
 
             self.struct_emb = nn.Linear(self.struct_in_channels, self.model_channels)
 
             if self.use_wall_self_attention:
-                self.wall_self_attention_layers = nn.ModuleList([WallEncoderLayer(self.model_channels, 4, 0.1, self.activation) for x in range(self.num_transfomers_layers)]) # type: ignore
+                self.wall_self_attention_layers = nn.ModuleList([WallEncoderLayer(self.model_channels, 4, 0.1, self.activation) 
+                                                                 for x in range(self.num_transfomers_layers)]) # type: ignore
 
         else:
-            self.transformer_layers: typing.List[EncoderLayer] = nn.ModuleList([EncoderLayer(self.model_channels, 4, 0.1, self.activation) for x in range(self.num_transfomers_layers)]) # type: ignore
+            self.transformer_layers: typing.List[EncoderLayer] = nn.ModuleList([EncoderLayer(self.model_channels, 4, 0.1, self.activation) 
+                                                                                for x in range(self.num_transfomers_layers)]) # type: ignore
         # self.transformer_layers = nn.ModuleList([nn.TransformerEncoderLayer(self.model_channels, 4, self.model_channels*2, 0.1, self.activation, batch_first=True) for x in range(self.num_layers)])
 
         self.output_linear1 = nn.Linear(self.model_channels, self.model_channels)
@@ -395,33 +398,33 @@ class TransformerModel(nn.Module):
             # if not self.analog_bit:
             #     x_structural = self.expand_points(x_structural, kwargs[f'{prefix}structural_connections'])
 
-            struct_corners_a = kwargs["struct_corners_a"].permute([0, 2, 1]).float()
+            struct_corners_a = kwargs["struct_corners_a"].permute([0, 2, 1]).float()        # torch.Size([48, 53, 2])
             struct_corners_b = kwargs["struct_corners_b"].permute([0, 2, 1]).float()
 
             if not self.analog_bit:
-                x_structural = self.expand_points_lines(struct_corners_a, struct_corners_b)
+                x_structural = self.expand_points_lines(struct_corners_a, struct_corners_b)  # torch.Size([48, 53, 18])
         
 
         # Different input embeddings (Input, Time, Conditions) 
-        time_emb = self.time_embed(timestep_embedding(timesteps, self.model_channels))
+        time_emb = self.time_embed(timestep_embedding(timesteps, self.model_channels))      
         time_emb = time_emb.unsqueeze(1)
         
         # Embedding of the corners of shape: N x corners x feats (feats==self.model_channels)
         input_emb = self.input_emb(x)
         
-        if self.condition_channels <= 1:
+        if self.condition_channels <= 1:                            # 115?
             raise ValueError("Condition channels must be > 1")
         
         cond: th.Tensor = None
-        for key in [f'{prefix}room_types', f'{prefix}corner_indices', f'{prefix}room_indices']:
+        for key in [f'{prefix}room_types', f'{prefix}corner_indices', f'{prefix}room_indices']: # improve?
             if cond is None:
                 cond = kwargs[key]
             else:
-                cond = th.cat((cond, kwargs[key]), 2)
+                cond = th.cat((cond, kwargs[key]), 2)       # torch.Size([48, 289, 15]), torch.Size([48, 289, 4]), torch.Size([48, 289, 96])
         
         assert cond is not None, "Condition is None, maybe the keys were wrong?"
 
-        cond_emb = self.condition_emb(cond.float())
+        cond_emb = self.condition_emb(cond.float())     # torch.Size([48, 289, 512])
 
         # PositionalEncoding and DM model
         out = input_emb + cond_emb + time_emb.repeat((1, input_emb.shape[1], 1))
@@ -429,7 +432,7 @@ class TransformerModel(nn.Module):
     
         if self.use_structural_cross_attention:
 
-            door_type_emb = self.door_type_emb(th.eye(3).to(x.device).float())
+            door_type_emb = self.door_type_emb(th.eye(3).to(x.device).float())      # torch.Size([3, 512])
 
             # TODO: mix in structural cond information? type and index are currently not useful, but corner_index might be?
             # Or maybe it's a bad idea to put in corner_index because of overfitting. Other than for the room corners,

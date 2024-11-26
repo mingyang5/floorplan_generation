@@ -15,12 +15,8 @@ import matplotlib.pyplot as plt
 
 from PIL import Image
 
-
 from house_diffusion.respace import SpacedDiffusion
-
-
 from house_diffusion import dist_util, logger
-
 from house_diffusion.script_util import (
     model_and_diffusion_defaults,
     create_model_and_diffusion,
@@ -30,14 +26,12 @@ from house_diffusion.script_util import (
 )
 
 from house_diffusion.modified_swiss_dwellings_housediffusion_dataset import get_dataloader_modified_swiss_dwellings, gather_ids
-
 from house_diffusion import modified_swiss_dwellings_housediffusion_dataset
-
 from house_diffusion.transformer import TransformerModel
+from house_diffusion.plotting.plot_from_feats import plot_from_batch, draw_from_batch
 
 import pickle
 
-from house_diffusion.plotting.plot_from_feats import plot_from_batch, draw_from_batch
 
 
 def create_argparser():
@@ -144,11 +138,8 @@ class HouseDiffusionInference:
         sample_and_gt = {
             "sample": sample.cpu(),
             "timesteps": timesteps,
-
             "sample_gt": sample_gt.cpu(),
-
             "model_kwargs": dict_to_device(model_kwargs, "cpu"),
-
             "id": model_kwargs["id"],
         }
 

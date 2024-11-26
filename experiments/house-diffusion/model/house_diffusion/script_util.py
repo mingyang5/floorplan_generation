@@ -21,7 +21,8 @@ def diffusion_defaults():
         rescale_timesteps=False,
         rescale_learned_sigmas=False,
         target_set=-1,
-        set_name='',
+        # set_name='',
+        set_name='train',
     )
 
 def update_arg_parser(args):
@@ -95,7 +96,8 @@ def model_and_diffusion_defaults():
     Defaults for image training.
     """
     res = dict(
-            dataset='',
+            # dataset='',
+            dataset='modified_swiss_dwellings',
             use_checkpoint=False,
             input_channels=0,
             condition_channels=0,
@@ -130,17 +132,18 @@ def create_model_and_diffusion(
     struct_in_channels: int,
     use_wall_self_attention: bool,
 ) -> typing.Tuple[TransformerModel, SpacedDiffusion]:
-    model = TransformerModel(input_channels, condition_channels, num_channels, out_channels, dataset, use_checkpoint, use_unet, analog_bit, struct_in_channels=struct_in_channels, use_wall_self_attention=use_wall_self_attention)
+    model = TransformerModel(input_channels, condition_channels, num_channels, out_channels, dataset, use_checkpoint, use_unet, analog_bit,
+                             struct_in_channels=struct_in_channels, use_wall_self_attention=use_wall_self_attention)
 
     diffusion = create_gaussian_diffusion(
-        steps=diffusion_steps,
+        steps=diffusion_steps,                  # 1000
         learn_sigma=learn_sigma,
-        noise_schedule=noise_schedule,
-        use_kl=use_kl,
-        predict_xstart=predict_xstart,
-        rescale_timesteps=rescale_timesteps,
-        rescale_learned_sigmas=rescale_learned_sigmas,
-        timestep_respacing=timestep_respacing,
+        noise_schedule=noise_schedule,          # cosine
+        use_kl=use_kl,                          # False
+        predict_xstart=predict_xstart,          # False
+        rescale_timesteps=rescale_timesteps,    # False
+        rescale_learned_sigmas=rescale_learned_sigmas,  # False
+        timestep_respacing=timestep_respacing,  # ''
     )
     return model, diffusion
 
@@ -156,7 +159,7 @@ def create_gaussian_diffusion(
     rescale_learned_sigmas=False,
     timestep_respacing="",
 ) -> SpacedDiffusion:
-    betas = gd.get_named_beta_schedule(noise_schedule, steps)
+    betas = gd.get_named_beta_schedule(noise_schedule, steps)           # shape (1000, )
     if use_kl:
         loss_type = gd.LossType.RESCALED_KL
     elif rescale_learned_sigmas:
@@ -165,7 +168,8 @@ def create_gaussian_diffusion(
         loss_type = gd.LossType.MSE
     if not timestep_respacing:
         timestep_respacing = [steps]
-    return SpacedDiffusion(
+    
+    model = SpacedDiffusion(
         use_timesteps=space_timesteps(steps, timestep_respacing),
         betas=betas,
         model_mean_type=(
@@ -180,9 +184,11 @@ def create_gaussian_diffusion(
             if not learn_sigma
             else gd.ModelVarType.LEARNED_RANGE
         ),
-        loss_type=loss_type,
-        rescale_timesteps=rescale_timesteps,
+        loss_type=loss_type,                    # MSE
+        rescale_timesteps=rescale_timesteps,    # False
     )
+    
+    return model
 
 
 def add_dict_to_argparser(parser, default_dict):
@@ -211,3 +217,84 @@ def str2bool(v):
         return False
     else:
         raise argparse.ArgumentTypeError("boolean value expected")
+
+
+def create_model_and_diffusion_proposed_v1(
+    input_channels,
+    condition_channels,
+    num_channels,
+    out_channels,
+    dataset,
+    use_checkpoint,
+    use_unet,
+    learn_sigma,
+    diffusion_steps,
+    noise_schedule,
+    timestep_respacing,
+    use_kl,
+    predict_xstart,
+    rescale_timesteps,
+    rescale_learned_sigmas,
+    analog_bit,
+    target_set,
+    set_name,
+    struct_in_channels: int,
+    use_wall_self_attention: bool,
+) -> typing.Tuple[TransformerModel, SpacedDiffusion]:
+    model = TransformerModel(input_channels, condition_channels, num_channels, out_channels, dataset, use_checkpoint, use_unet, analog_bit,
+                             struct_in_channels=struct_in_channels, use_wall_self_attention=use_wall_self_attention)
+
+    diffusion = create_gaussian_diffusion_proposed_v1(
+        steps=diffusion_steps,                  # 1000
+        learn_sigma=learn_sigma,
+        noise_schedule=noise_schedule,          # cosine
+        use_kl=use_kl,                          # False
+        predict_xstart=predict_xstart,          # False
+        rescale_timesteps=rescale_timesteps,    # False
+        rescale_learned_sigmas=rescale_learned_sigmas,  # False
+        timestep_respacing=timestep_respacing,  # ''
+    )
+    return model, diffusion
+
+def create_gaussian_diffusion_proposed_v1(
+    *,
+    steps=1000,
+    learn_sigma=False,
+    sigma_small=False,
+    noise_schedule="linear",
+    use_kl=False,
+    predict_xstart=False,
+    rescale_timesteps=False,
+    rescale_learned_sigmas=False,
+    timestep_respacing="",
+) -> SpacedDiffusion:
+    betas = gd.get_named_beta_schedule(noise_schedule, steps)           # shape (1000, )
+    if use_kl:
+        loss_type = gd.LossType.RESCALED_KL
+    elif rescale_learned_sigmas:
+        loss_type = gd.LossType.RESCALED_MSE
+    else:
+        loss_type = gd.LossType.MSE
+    if not timestep_respacing:
+        timestep_respacing = [steps]
+    
+    model = SpacedDiffusion(
+        use_timesteps=space_timesteps(steps, timestep_respacing),
+        betas=betas,
+        model_mean_type=(
+            gd.ModelMeanType.EPSILON if not predict_xstart else gd.ModelMeanType.START_X
+        ),
+        model_var_type=(
+            (
+                gd.ModelVarType.FIXED_LARGE
+                if not sigma_small
+                else gd.ModelVarType.FIXED_SMALL
+            )
+            if not learn_sigma
+            else gd.ModelVarType.LEARNED_RANGE
+        ),
+        loss_type=loss_type,                    # MSE
+        rescale_timesteps=rescale_timesteps,    # False
+    )
+    
+    return model
