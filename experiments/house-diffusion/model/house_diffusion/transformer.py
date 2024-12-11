@@ -230,7 +230,7 @@ class TransformerModel(nn.Module):
         self.use_checkpoint = use_checkpoint
         self.analog_bit = analog_bit
         self.use_unet = use_unet
-        self.num_transfomers_layers = 8
+        self.num_transfomers_layers = 4
 
         self.struct_in_channels = struct_in_channels
 
