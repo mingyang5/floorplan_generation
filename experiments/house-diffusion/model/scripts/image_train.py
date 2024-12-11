@@ -23,22 +23,18 @@ from house_diffusion.train_util import TrainLoop
 from house_diffusion.modified_swiss_dwellings_housediffusion_dataset import load_modified_swiss_dwellings, get_dataloader_modified_swiss_dwellings
 
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 def main():
     args = create_argparser().parse_args()
     update_arg_parser(args)
 
     print("Going to run: dist_util.setup_dist()")
-
     dist_util.setup_dist()
 
     print("Finished running: dist_util.setup_dist()")
-    
-    logger.configure()                  # wandb
-
+    logger.configure()                  # wandb config here
     logger.log_config(vars(args))
-
     logger.log("creating model and diffusion...")
     # model, diffusion = create_model_and_diffusion(**args_to_dict(args, model_and_diffusion_defaults().keys()))      # present the model
     
@@ -152,18 +148,17 @@ def create_argparser():
         weight_decay=0.0,
         lr_anneal_steps=0,
         batch_size=48,
-        # batch_size=256,
-        microbatch=-1,  # -1 disables microbatches
-        ema_rate="0.9999",  # comma-separated list of EMA values
+        microbatch=-1,              # -1 disables microbatches
+        ema_rate="0.9999",          # comma-separated list of EMA values
         log_interval=100,
-        save_interval=2000,
+        save_interval=10000,
         resume_checkpoint="",
         use_fp16=False,
         fp16_scale_growth=1e-3,
         struct_in_channels=0,
-        timeout = "36:00:00",
-        test_interval=2000,
-        train_num_steps=700000
+        timeout = "18:00:00",
+        test_interval=10000,
+        train_num_steps=70000
     )
     parser = argparse.ArgumentParser()
     defaults.update(model_and_diffusion_defaults())

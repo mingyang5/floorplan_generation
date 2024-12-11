@@ -230,7 +230,7 @@ class TransformerModel(nn.Module):
         self.use_checkpoint = use_checkpoint
         self.analog_bit = analog_bit
         self.use_unet = use_unet
-        self.num_transfomers_layers = 4
+        self.num_transfomers_layers = 8
 
         self.struct_in_channels = struct_in_channels
 
@@ -253,7 +253,7 @@ class TransformerModel(nn.Module):
             nn.Linear(self.model_channels, self.time_channels),
         )
         
-        self.input_emb = nn.Linear(self.in_channels, self.model_channels)               # 18, 512
+        self.input_emb = nn.Linear(self.in_channels, self.model_channels)
         self.condition_emb = nn.Linear(self.condition_channels, self.model_channels)
 
         if self.use_structural_cross_attention:                                         # True

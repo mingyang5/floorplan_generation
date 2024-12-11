@@ -3,7 +3,10 @@ from matplotlib.cm import get_cmap
 import matplotlib.pyplot as plt
 import networkx as nx
 
-from constants import ZONING_NAMES
+import os
+import sys
+# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from .constants import ZONING_NAMES
 
 
 def plot_polygon(ax, poly, label=None, **kwargs):

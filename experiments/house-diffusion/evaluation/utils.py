@@ -16,7 +16,6 @@ def load_pickle(filename):
 
 
 def colorize_floorplan(img, classes, cmap):
-
     """
     Colorizes an integer-valued image (multi-class segmentation mask)
     based on a pre-defined cmap colorset.

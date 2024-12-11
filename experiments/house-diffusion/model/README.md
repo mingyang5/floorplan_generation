@@ -61,8 +61,9 @@ cd scripts
 
 You can run a single experiment using the following command:
 
-```
-python image_train.py --dataset modified_swiss_dwellings --batch_size 32 --set_name train --timeout 36:00:00 --save_interval 2000 --test_interval 1000 --use_wall_self_attention true
+```bash
+CUDA_VISIBLE_DEVICES=1 python image_train.py --dataset modified_swiss_dwellings --batch_size 48 --set_name train --timeout 36:00:00 --save_interval 2000 --test_interval 1000 --use_wall_self_attention true
+
 ```
 
 ### Options:
@@ -116,7 +117,8 @@ Path to checkpoint to resume from.
 'modified_swiss_dwellings' expects data to be preprocessed for 115 condition channels, by using the following preprocessing:
 
 ```bash
-python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-train' is_train=true use_topojson_processing=true name=house_dicts_mrr make_mrr=true room_type_dim=15 corner_index_dim=4 room_index_dim=96```
+python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-train' is_train=true use_topojson_processing=true name=house_dicts_mrr make_mrr=true room_type_dim=15 corner_index_dim=4 room_index_dim=96
+```
 
 ```
 Note that room_type_dim=15, corner_index_dim=4, and room_index_dim=96 indeed add up to 115 condition channels.
@@ -125,7 +127,8 @@ Note that room_type_dim=15, corner_index_dim=4, and room_index_dim=96 indeed add
 'modified_swiss_dwellings' expects data to be preprocessed for 183 condition channels, e.g. by using the following preprocessing:
 
 ```bash
-python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-train' is_train=true use_topojson_processing=true name=house_dicts_full make_mrr=false room_type_dim=15 corner_index_dim=72 room_index_dim=96```
+python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-train' is_train=true use_topojson_processing=true name=house_dicts_full make_mrr=false room_type_dim=15 corner_index_dim=72 room_index_dim=96
+```
 
 ```
 
@@ -148,6 +151,14 @@ To sample floorplans, and store resulting images (and pickles of predictions), r
 
 ```bash
 python image_inference_msd.py --dataset modified_swiss_dwellings_all_corners --batch_size 4 --set_name test --model_path ckpts/hpc/model791000.pt --path_struct "path to modified swiss dwellings download/modified-swiss-dwellings/modified-swiss-dwellings-v1-test/struct_in/" --dataset_name modified_swiss_dwellings_all_corners_testset
+```
+
+```bash
+python image_inference_msd.py --dataset modified_swiss_dwellings --batch_size 4 --set_name test --model_path /home/mingyang/workspace/layout/floorplan/experiments/house-diffusion/ckpts/openai_2024_11_02_15_43_14_565720/model038000.pt --path_struct "/home/mingyang/workspace/layout/floorplan/experiments/house-diffusion/model/datasets/modified-swiss-dwellings-v2/test/struct_in" --dataset_name modified_swiss_dwellings
+```
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python image_inference_msd.py --dataset modified_swiss_dwellings --batch_size 4 --set_name test --model_path /home/mingyang/workspace/layout/floorplan/experiments/house-diffusion/model/scripts/ckpts/openai_2024_11_26_14_37_29_456830/ema_0.9999_080000.pt --path_struct "/home/mingyang/workspace/layout/floorplan/experiments/house-diffusion/model/datasets/modified-swiss-dwellings-v2/test/struct_in" --dataset_name modified_swiss_dwellings
 ```
 
 ### Options
@@ -173,4 +184,8 @@ python image_sample.py --dataset modified_swiss_dwellings --batch_size 4 --set_n
   journal={arXiv preprint arXiv:2211.13287},
   year={2022}
 }
+```
+
+```bash
+CUDA_VISIBLE_DEVICES=1 python image_train.py --dataset modified_swiss_dwellings --batch_size 48 --set_name train --timeout 18:00:00 --save_interval 10000 --test_interval 10000 --use_wall_self_attention true
 ```

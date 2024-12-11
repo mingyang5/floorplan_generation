@@ -34,7 +34,7 @@ class MyConfig:
         room_index_dim (int): Length of the one-hot encoding of room indices.
 """
 
-    datapath: str = "/home/mingyang/workspace/layout/dataset/modified-swiss-dwellings-v2"
+    datapath: str = "/home/mingyang/workspace/layout/floorplan/experiments/house-diffusion/model/datasets/modified-swiss-dwellings-v2"
     is_train: bool = True
 
     use_topojson_processing: bool = True
@@ -49,10 +49,8 @@ class MyConfig:
 
 def gather_ids(datapath, sub_path="struct_in"):
     ids = []
-
     for id in os.listdir(os.path.join(datapath, sub_path)):
         ids.append(int(id.split(".")[0]))
-
     return sorted(ids)
 
 

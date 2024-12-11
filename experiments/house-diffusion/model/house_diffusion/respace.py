@@ -38,8 +38,8 @@ def space_timesteps(num_timesteps, section_counts):
                 f"cannot create exactly {num_timesteps} steps with an integer stride"
             )
         section_counts = [int(x) for x in section_counts.split(",")]
-    size_per = num_timesteps // len(section_counts)
-    extra = num_timesteps % len(section_counts)
+    size_per = num_timesteps // len(section_counts)     # 1000
+    extra = num_timesteps % len(section_counts)         # 0
     start_idx = 0
     all_steps = []
     for i, section_count in enumerate(section_counts):
@@ -74,7 +74,7 @@ class SpacedDiffusion(GaussianDiffusion):
     def __init__(self, use_timesteps, **kwargs):
         self.use_timesteps = set(use_timesteps)
         self.timestep_map = []
-        self.original_num_steps = len(kwargs["betas"])
+        self.original_num_steps = len(kwargs["betas"])      # 1000
 
         base_diffusion = GaussianDiffusion(**kwargs)  # pylint: disable=missing-kwoa
         last_alpha_cumprod = 1.0

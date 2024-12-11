@@ -17,7 +17,7 @@ Generate training samples with the Minimum Rotated Rectangle approximation (MRR)
 ```
 python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-train' is_train=true use_topojson_processing=true name=house_dicts_mrr make_mrr=true
 
-python run_data_preprocessing.py datapath='/home/mingyang/workspace/layout/dataset/modified-swiss-dwellings-v2/train' is_train=true use_topojson_processing=true name=house_dicts_mrr make_mrr=true
+python run_data_preprocessing.py datapath='/home/mingyang/workspace/layout/floorplan/experiments/house-diffusion/model/datasets/modified-swiss-dwellings-v2/train' is_train=true use_topojson_processing=true name=house_dicts_mrr_v2 make_mrr=true
 ```
 
 Generate training samples without MRR approximation:
@@ -26,8 +26,7 @@ Generate training samples without MRR approximation:
 python run_data_preprocessing.py datapath='path_to_datasets/modified-swiss-dwellings/modified-swiss-dwellings-v1-train' is_train=true use_topojson_processing=true name=house_dicts_full make_mrr=false
 
 # Bug?
-python run_data_preprocessing.py datapath='/home/mingyang/workspace/layout/dataset/modified-swiss-dwellings-v2/train' is_train=true use_topojson_processing=true name=house_dicts_full make_mrr=false
-
+python run_data_preprocessing.py datapath='/home/mingyang/workspace/layout/floorplan/experiments/house-diffusion/model/datasets/modified-swiss-dwellings-v2/train' is_train=true use_topojson_processing=true name=house_dicts_full make_mrr=false
 ```
 
 ### Preprocess test samples

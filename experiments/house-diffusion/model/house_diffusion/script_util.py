@@ -4,7 +4,9 @@ import typing
 
 from . import gaussian_diffusion as gd
 from .respace import SpacedDiffusion, space_timesteps
-from .transformer import TransformerModel
+# from .transformer import TransformerModel
+from .msd_transformer import TransformerModel
+# from .msd_transformer_v2 import TransformerModel
 
 def diffusion_defaults():
     """

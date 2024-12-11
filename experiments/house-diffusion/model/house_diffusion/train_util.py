@@ -117,37 +117,73 @@ class TrainLoop:
         for param_group in self.opt.param_groups:
             param_group["lr"] = lr
 
+    # def run_loop(self):
+    #     self.update_lr()
+    #     while (not self.lr_anneal_steps or self.step + self.resume_step < self.lr_anneal_steps):  
+    #         batch, cond = next(self.data)                               # torch.Size([48, 2, 289])
+    #         self.run_step(batch, cond)                                  
+    #         if (self.step + self.resume_step) % 100000 == 0:
+    #             print(f"Current steps: {self.step}, update learning rate...")
+    #             self.update_lr()
+    #         if self.step % self.log_interval == 0:
+    #             logger.dumpkvs()
+    #         if self.test_interval and self.step % self.test_interval == 0:
+    #             self.test()
+    #         if self.step % self.save_interval == 0:
+    #             self.save()
+    #             if os.environ.get("DIFFUSION_TRAINING_TEST", "") and self.step > 0:
+    #                 return
+    #         self.step += 1
+            
+    #         if self.train_num_steps and self.step >= self.train_num_steps:
+    #             logger.log("Reach total training steps, exiting...")
+    #             self.save()  # Save final checkpoint before exiting
+    #             return
+            
+    #         if self.timeout_time and datetime.datetime.now() > self.timeout_time:
+    #             logger.log("Training time exceed timeout, exiting...")
+    #             self.save()
+    #             return
+
+    #     if (self.step - 1) % self.save_interval != 0:
+    #         self.save()
+    
     def run_loop(self):
         self.update_lr()
 
-        while (not self.lr_anneal_steps or self.step + self.resume_step < self.lr_anneal_steps):  
-            batch, cond = next(self.data)                               # torch.Size([48, 2, 289])
-            self.run_step(batch, cond)                                  
+        while not self.lr_anneal_steps or self.step + self.resume_step < self.lr_anneal_steps:
+            if self.timeout_time and datetime.datetime.now() > self.timeout_time:
+                logger.log("Training time exceeded timeout, exiting...")
+                self.save()
+                return
+
+            batch, cond = next(self.data)  # torch.Size([48, 2, 289])
+            self.run_step(batch, cond)
+
             if (self.step + self.resume_step) % 100000 == 0:
                 print(f"Current steps: {self.step}, update learning rate...")
                 self.update_lr()
+            
             if self.step % self.log_interval == 0:
                 logger.dumpkvs()
-            if self.test_interval and self.step % self.test_interval == 0:
-                self.test()
+
+            # if self.test_interval and self.step % self.test_interval == 0:
+            #     self.test()
             if self.step % self.save_interval == 0:
                 self.save()
                 if os.environ.get("DIFFUSION_TRAINING_TEST", "") and self.step > 0:
                     return
-            self.step += 1
-            
+                
             if self.train_num_steps and self.step >= self.train_num_steps:
-                logger.log("Reach total training steps, exiting...")
-                self.save()  # Save final checkpoint before exiting
-                return
-            
-            if self.timeout_time and datetime.datetime.now() > self.timeout_time:
-                logger.log("Training time exceed timeout, exiting...")
+                logger.log("Reached total training steps, exiting...")
                 self.save()
                 return
 
+            self.step += 1
+
         if (self.step - 1) % self.save_interval != 0:
             self.save()
+
 
     def run_step(self, batch: th.Tensor, cond: typing.Dict[str, th.Tensor]):
         self.forward_backward(batch, cond)
@@ -166,7 +202,7 @@ class TrainLoop:
                 for k, v in cond.items()
             }
             t, weights = self.schedule_sampler.sample(micro.shape[0], dist_util.dev())      # house_diffusion.resample.UniformSampler
-
+            
             losses = self.diffusion.training_losses(
                 self.model, micro, t, model_kwargs=micro_cond, analog_bit=self.analog_bit   # self.analog_bit -> False
             )

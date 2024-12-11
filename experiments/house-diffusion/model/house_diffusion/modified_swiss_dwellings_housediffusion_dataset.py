@@ -50,8 +50,8 @@ def get_dataloader_modified_swiss_dwellings(
         #                                         f"../datasets/{dataset_name}/{set_name}_ids.csv", 
         #                                         use_augmentation=use_augmentation,
         #                                         use_structural_feats=use_structural_feats)
-        dataset = ModifiedSwissDwellingsDataset(f"model/datasets/{dataset_name}/house_dicts", 
-                                                f"model/datasets/{dataset_name}/{set_name}_ids.csv", 
+        dataset = ModifiedSwissDwellingsDataset(f"/home/mingyang/workspace/layout/floorplan/experiments/house-diffusion/model/datasets/{dataset_name}/house_dicts", 
+                                                f"/home/mingyang/workspace/layout/floorplan/experiments/house-diffusion/model/datasets/{dataset_name}/{set_name}_ids.csv", 
                                                 use_augmentation=use_augmentation,
                                                 use_structural_feats=use_structural_feats)
 

@@ -32,11 +32,12 @@ experiments/unet/model/__pycache__
 experiments/house-diffusion/.vscode/
 
 experiments/unet/data/sam_vit_h_4b8939.pth
-experiments/unet/processed_dataset
+experiments/unet/dataset_processed
 
-experiments/house-diffusion-archive/
+experiments/house-diffusion-archive
 experiments/house-diffusion/min_batch.txt
 experiments/unet/checkpoints/
+experiments/unet/results
 
 ### Else
 .vscode
@@ -45,3 +46,6 @@ datasets
 experiments/unet/results
 ckpts
 data_analysis.ipynb
+
+experiments/house-diffusion/outputs
+experiments/unet/msd_unet_processed_dataset

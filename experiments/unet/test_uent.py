@@ -1,29 +1,27 @@
 import torch
 from torch_geometric.data import DataLoader
-from utils_unet import load_pickle
+
 from evaluation.metrics import mIOU
 from model.models_unet import GraphFloorplanUNet
-from data.data_unet import msdDataset
 
+from utils import load_pickle
+from data.data import msdDataset
 from tqdm import tqdm
 
 # Device configuration
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
-# Number of classes
 num_node_features = 4
 classes = 11
 
-# Load the test dataset
 test_dataset = msdDataset('./dataset_processed/test')
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 
-# Load the trained model
 input_nc = 3
 output_nc = 11
 
 model = GraphFloorplanUNet(num_node_features, input_nc, output_nc, features=[64, 128, 256, 512])
-model.load_state_dict(torch.load('checkpoints/model_checkpoint_epoch_99.pt'))
+model.load_state_dict(torch.load('results/11020029/model_checkpoint_epoch_99.pt'))
+
 model = model.to(device)
 
 # Evaluate the model
